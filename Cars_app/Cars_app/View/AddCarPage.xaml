@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Cars_app.View.AddCarPage">
+    <ContentPage.Content>
+        <StackLayout>
+            <Entry Placeholder="Name"
+                   Text="{Binding Name}"
+                   Margin="4" />
+
+            <Entry Placeholder="Registration"
+                   Text="{Binding Registration}"
+                   Margin="4" />
+
+            <Entry Placeholder="Year"
+                   Text="{Binding Year}"
+                   Margin="4" />
+
+           
+            <Button Text="save" Command="{Binding SaveCar}"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>
