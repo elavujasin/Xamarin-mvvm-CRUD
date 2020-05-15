@@ -2,6 +2,7 @@
 using Cars_app.View;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 using System.Windows.Input;
 using Xamarin.Forms;
@@ -13,6 +14,9 @@ namespace Cars_app.VievModel
 
 
         private string name;
+        private string registration;
+        private int year;
+        private int _id;
         public string Name
         {
             get { return name; }
@@ -23,7 +27,7 @@ namespace Cars_app.VievModel
             }
         }
 
-        private string registration;
+
         public string Registration
         {
             get { return registration; }
@@ -34,7 +38,6 @@ namespace Cars_app.VievModel
             }
         }
 
-        private int year;
         public int Year
         {
             get { return year; }
@@ -44,46 +47,35 @@ namespace Cars_app.VievModel
                 OnPropertyChanged("Year");
             }
         }
-        public ICommand SaveCommand { get; private set; }
 
-        private int _Id;
-
-        public UpdateViewModel(int Id)
+        public UpdateViewModel(CarModel Car)
         {
-            CarModel car = new CarModel();
-            foreach (CarModel x in MainViewModel.Lista)
-            {  if (x.ID == Id)
-                {
-                    car = x;
-                    break;
-                }   
-
-            }
-
-             _Id = car.ID;
-
-            Name = car.Name;
-            Registration = car.Registration;
-            Year = car.Year;
-           
-
+            CarModel _car = new CarModel();
+            _car = Car;
+            _id = _car.ID;
+            Name = _car.Name;
+            Registration = _car.Registration;
+            Year = _car.Year;
             SaveCommand = new Command(Save);
         }
 
-        public void Save()
-        {
-            foreach (CarModel x in MainViewModel.Lista)
-            {
-                if (x.ID == _Id)
-                {
-                    x.Name = Name;
-                    x.Registration = Registration;
-                    x.Year = Year;
-                    break;
-                }
+        public ICommand SaveCommand { get; private set; }
 
-            }
-            Application.Current.MainPage = new NavigationPage(new MainPage());
+        public async void Save()
+        {
+
+            CarModel _newcar = new CarModel()
+            {
+                Name = Name,
+                Registration = Registration,
+                Year = Year,
+                ID = _id
+            };
+
+            await MainViewModel.NavigationStog.PopAsync();
+            MessagingCenter.Send<UpdateViewModel, CarModel>(this, "hi", _newcar);
+
+
         }
 
     }

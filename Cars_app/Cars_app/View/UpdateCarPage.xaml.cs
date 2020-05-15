@@ -1,4 +1,5 @@
-﻿using Cars_app.VievModel;
+﻿using Cars_app.Model;
+using Cars_app.VievModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,10 +15,10 @@ namespace Cars_app.View
 	public partial class UpdateCarPage : ContentPage
 	{
        
-        public UpdateCarPage(int id)
+        public UpdateCarPage(CarModel Car)
         {
             InitializeComponent();
-            this.BindingContext = new UpdateViewModel(id);
+            this.BindingContext = new UpdateViewModel(Car);
            
         }
        

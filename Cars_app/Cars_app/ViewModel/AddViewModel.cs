@@ -2,16 +2,21 @@
 using Cars_app.VievModel;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Text;
 using System.Windows.Input;
 using Xamarin.Forms;
 
 namespace Cars_app.ViewModel
 {
-   public class AddViewModel : ViewModelBase
+    class AddViewModel : ViewModelBase
     {
-        public ICommand SaveCar { get; set; }
+
+
         private string name;
+        private string registration;
+        private int year;
+
         public string Name
         {
             get { return name; }
@@ -22,7 +27,7 @@ namespace Cars_app.ViewModel
             }
         }
 
-        private string registration;
+
         public string Registration
         {
             get { return registration; }
@@ -33,7 +38,7 @@ namespace Cars_app.ViewModel
             }
         }
 
-        private int year;
+
         public int Year
         {
             get { return year; }
@@ -43,19 +48,21 @@ namespace Cars_app.ViewModel
                 OnPropertyChanged("Year");
             }
         }
-       public AddViewModel()
+
+        public AddViewModel()
         {
+
             SaveCar = new Command(Save);
+
         }
+        public ICommand SaveCar { get; set; }
 
-
-        public void Save()
+        public async void Save()
         {
-            MainViewModel.Lista.Add(new CarModel() { Name = Name, Registration = Registration, Year = Year, ID = MainViewModel.IdGenerator++ });
-
-
-            Application.Current.MainPage = new NavigationPage(new MainPage());
-
+            CarModel _newcar = new CarModel()
+            { Name = Name, Registration = Registration, Year = Year, ID = MainViewModel.IdGenerator++ };
+            await MainViewModel.NavigationStog.PopAsync();
+            MessagingCenter.Send<AddViewModel, CarModel>(this, "hi2", _newcar);
         }
     }
 }

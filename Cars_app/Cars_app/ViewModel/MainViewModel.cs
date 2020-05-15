@@ -1,5 +1,6 @@
 ﻿using Cars_app.Model;
 using Cars_app.View;
+using Cars_app.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,11 +11,12 @@ using Xamarin.Forms;
 
 namespace Cars_app.VievModel
 {
-    class MainViewModel : ViewModelBase
+    public class MainViewModel : ViewModelBase
     {
-        public ICommand AddCar { get; set; }
+
+        private CarModel _selectedCar { get; set; }
         public static int IdGenerator = 0;
-        public static ObservableCollection<CarModel> Lista = new ObservableCollection<CarModel>
+        public ObservableCollection<CarModel> Lista = new ObservableCollection<CarModel>
            {
               new CarModel
               {
@@ -34,6 +36,14 @@ namespace Cars_app.VievModel
               },
 
        };
+        public static INavigation NavigationStog;
+        public MainViewModel(INavigation Navigation)
+        {
+            NavigationStog = Navigation;
+            CarList = Lista;
+            AddCar = new Command(Add);
+            MessageReceived();
+        }
 
         public ObservableCollection<CarModel> CarList
         {
@@ -44,14 +54,24 @@ namespace Cars_app.VievModel
             }
 
         }
-    
 
-        public MainViewModel()
+        public CarModel SelectedCar
         {
-            CarList = Lista;
-            AddCar = new Command(Add);
-        }
+            get { return _selectedCar; }
+            set
+            {
+                if (_selectedCar != value)
+                {
+                    CarModel var = new CarModel();
+                    var = value;
+                    _selectedCar = value;
+                    HandleSelectedItem(SelectedCar);
 
+                }
+            }
+
+        }
+        public ICommand AddCar { get; set; }
         public ICommand DeleteCar
         {
             get
@@ -64,51 +84,62 @@ namespace Cars_app.VievModel
                     if (answer)
                     {
                         Lista.Remove(item);
-                        
+
 
                     }
                 });
             }
         }
-    
-        private CarModel selectedCar { get; set; }
-        public CarModel SelectedCar
-        {
-            get { return selectedCar; }
-            set
-            {
-                if(selectedCar!=value)
-                    {
-                    CarModel var = new CarModel();
-                    var = value;
-                    selectedCar = value;
-                    HandleSelectedItem(var);
-                    
-                   
-                    
-                   
-                }
-            }
 
-        }
+
 
         private async void HandleSelectedItem(CarModel car)
-        { 
-            bool answer = await Application.Current.MainPage.DisplayAlert("Edit","Are you sure you want to edit this","yes","no");
+        {
+            bool answer = await Application.Current.MainPage.DisplayAlert("Edit", "Are you sure you want to edit this", "yes", "no");
             if (answer)
             {
-                Application.Current.MainPage = new NavigationPage(new UpdateCarPage(car.ID));
-              
+                await NavigationStog.PushAsync(new UpdateCarPage(car));
             }
-            
+
 
         }
 
-        public void Add()
+
+
+        public async void Add()
         {
-            Application.Current.MainPage = new NavigationPage(new AddCarPage());
+
+            await NavigationStog.PushAsync(new AddCarPage());
 
         }
+        private void MessageReceived()
+        {
+            MessagingCenter.Subscribe<AddViewModel, CarModel>(this, "hi2", (sender, arg) =>
+                 {
 
+                     Lista.Add(arg);
+
+                 });
+            MessagingCenter.Subscribe<UpdateViewModel, CarModel>(this, "hi", (sender, arg) =>
+            {
+                CarModel _car = new CarModel();
+                int i = 0;
+                _car = arg;
+                foreach (CarModel x in Lista)
+                {
+                    if (x.ID == arg.ID)
+                        break;
+                    i++;
+                }
+                Lista[i] = _car;
+
+
+
+            });
+
+
+        }
     }
+
 }
+

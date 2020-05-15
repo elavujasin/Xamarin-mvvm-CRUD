@@ -4,7 +4,7 @@ using System.Text;
 using SQLite;
 namespace Cars_app.Model
 {
-    class CarModel
+  public class CarModel
     {
         [PrimaryKey]
         public int ID { get; set; }

@@ -13,7 +13,7 @@ namespace Cars_app
         public MainPage()
         {
             InitializeComponent();
-            this.BindingContext = new MainViewModel();
+            this.BindingContext = new MainViewModel(this.Navigation);
         }
 
     }
